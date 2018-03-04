@@ -111,19 +111,28 @@ std::vector<long> searchClosest(std::vector<long> inputArr)
     }
 
     long max = 0;
-    long position = -1;
+    std::vector<long> position;
     for (std::unordered_map<long, long>::iterator it = searchMap.begin(); it != searchMap.end(); it++)
     {
         ///std::cout<<it->first<<" "<<it->second<<std::endl;
         if (it->second > max)
         {
             max = it->second;
-            position = it->first;
+            std::vector<long> newPosition = {it->first};
+            position.swap(newPosition);
+        }
+        else if(it->second == max && max != 0)
+        {
+            position.push_back(it->first);
         }
     }
 
-    return {position};
+    if (position.size() == 0)
+        position.push_back(-1);
+
+    return position;
 }
+
 void preprocessMatrix()
 {
     //for(std::vector<vector<long>>::iterator it_r=matrix.begin(); it_r!= matrix.end();it_r++){
