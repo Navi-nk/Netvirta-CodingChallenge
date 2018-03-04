@@ -2,35 +2,62 @@
 #include <vector>
 #include <unordered_map>
 #include <gtest/gtest.h>
-
-std::vector<long> search(std::vector<long> inputArr)
-{
-    //for (std::vector<long>::iterator it = inputArr.begin(); it != inputArr.end(); it++)
-    //{
-    //std::cout << *it << " " << std::endl;
-    long i = 0;
-    while (i<inputArr.size())
-    {
-        if (matrixMap.find(inputArr[i]) == matrixMap.end())
-            return {-1};
-        
-    }
-    //}
-
-    return {0};
-}
+#include <string>
+#include <regex>
 
 std::vector<std::vector<long>> matrix = {
     {1, 2, 4, 5, 7, 10, 30},
     {6, 10, 5, 25, 1, 25, 90},
     {10, 5, 25, 6, 7, 8, 30}};
 
-std::unordered_map<std::string, std::vector<long> (*)(std::vector<long>)> funcMap = {
-    {"search", &search},
-};
-
 std::unordered_map<long, std::unordered_map<long, std::vector<long>>> matrixMap;
 
+std::vector<long> searchOrdered(std::vector<long> inputArr)
+{
+    if (matrixMap.find(inputArr[0]) == matrixMap.end() || inputArr.size() > matrix[0].size())
+            return {-1};
+
+    std::vector<long> res;
+    long i = 0;
+    
+    std::unordered_map<long, std::vector<long>> innerMap = matrixMap[inputArr[0]];
+    for (std::unordered_map<long, std::vector<long>>::iterator it = innerMap.begin(); it != innerMap.end(); it++)
+    {
+        std::vector<long> innerVec = it->second;
+        for(std::vector<long>::iterator it1 = innerVec.begin(); it1 != innerVec.end(); it1++)
+        {
+            long j=1,pos=*it1;
+            while(j<inputArr.size())
+            {
+                if(matrix[it->first][pos+j] == inputArr[j])
+                {
+                    j++;
+                    continue;
+                }
+                break;
+            }
+            if(j==inputArr.size())
+            {
+                res.push_back(it->first);
+                break;
+            }
+        }
+
+    }
+    if(res.size() == 0)
+        res.push_back(-1);
+    return res;
+}
+
+std::vector<long> searchUnordered(std::vector<long> inputArr)
+{
+
+}
+
+std::vector<long> searchClosest(std::vector<long> inputArr)
+{
+
+}
 void preprocessMatrix()
 {
     //for(std::vector<vector<long>>::iterator it_r=matrix.begin(); it_r!= matrix.end();it_r++){
@@ -80,6 +107,21 @@ void printMap()
     }
 }
 
+void printResult(std::vector<long> res)
+{
+    for(std::vector<long>::iterator it=res.begin(); it != res.end(); it++)
+    {
+        std::cout<<*it<<" ";
+    }
+    std::cout<<std::endl;
+}
+
+std::unordered_map<std::string, std::vector<long> (*)(std::vector<long>)> funcMap = {
+    {"searchOrdered", &searchOrdered},
+    {"searchUnordered", &searchUnordered},
+    {"searchClosest", &searchClosest},
+};
+
 int main(int argc, char **argv)
 {
     /*cout << "You have entered " << argc
@@ -93,18 +135,22 @@ int main(int argc, char **argv)
 
     preprocessMatrix();
 
-    // printMap();
-
+    printMap();
+    std::cout<<matrix[0].size()<<std::endl;
     std::string line;
-    while (std::getline(std::cin, line)) // read from std::cin
+    while (std::getline(std::cin, line)) 
     {
+        line = std::regex_replace(line, std::regex("( ) +")," ");
+        line = std::regex_replace(line, std::regex("^ +| +$"),"");
+
+        std::cout << "Line Received: " << line << '\n';
+
         if (line.compare("exit") == 0)
         {
             std::cout << "Bye Bye" << std::endl;
             break;
         }
 
-        std::cout << "Line Received: " << line << '\n';
         int pos = 0;
         std::string cmd;
         std::vector<long> inputArr;
@@ -127,12 +173,19 @@ int main(int argc, char **argv)
                 if (pos == std::string::npos)
                     inputArr.push_back(std::stol(line.substr(0, line.length()), nullptr));
 
-                funcMap[cmd](inputArr);
+                std::vector<long> res = funcMap[cmd](inputArr);
+
+                printResult(res);
             }
             catch (...)
             {
                 std::cout << "invalid input. try again" << std::endl;
             }
+        }
+        else
+        {
+            std::cout<<"command not recognized"<<std::endl;
+
         }
     }
 
