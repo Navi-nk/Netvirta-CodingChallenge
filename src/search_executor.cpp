@@ -1,6 +1,8 @@
 #include "search_executor.hpp"
+#include "ordered_search.hpp"
+#include "unordered_search.hpp"
+#include "closest_search.hpp"
 #include <iostream>
-#include <regex>
 
 bool SearchExecutor::preprocess(std::vector<std::string> strVec)
 {
@@ -22,7 +24,7 @@ bool SearchExecutor::preprocess(std::vector<std::string> strVec)
                 innerVec.push_back(std::stol(line.substr(0, line.length()), nullptr));
 
             if (innerVec.size() > 0)
-                matrix.push_back(innerVec);
+                matrixData.matrix.push_back(innerVec);
 
             std::cout << *it << " " << std::endl;
         }
@@ -33,25 +35,55 @@ bool SearchExecutor::preprocess(std::vector<std::string> strVec)
     }
 
     preprocessMatrix();
-    
+
     return true;
 }
 
 void SearchExecutor::preprocessMatrix()
 {
-    for (long i = 0; i < matrix.size(); i++)
+    for (long i = 0; i < matrixData.matrix.size(); i++)
     {
-        for (long j = 0; j < matrix[i].size(); j++)
+        for (long j = 0; j < matrixData.matrix[i].size(); j++)
         {
-            if (matrixMap.find(matrix[i][j]) == matrixMap.end())
+            if (matrixData.matrixMap.find(matrixData.matrix[i][j]) == matrixData.matrixMap.end())
             {
                 std::unordered_map<long, std::vector<long>> innerMap = {{i, {j}}};
-                matrixMap.insert({matrix[i][j], innerMap});
+                matrixData.matrixMap.insert({matrixData.matrix[i][j], innerMap});
             }
             else
             {
-                (matrixMap[matrix[i][j]])[i].push_back(j);
+                (matrixData.matrixMap[matrixData.matrix[i][j]])[i].push_back(j);
             }
         }
+    }
+}
+
+bool SearchExecutor::setSearchStrategy(std::string cmd)
+{
+    resetStrategy();
+
+    if (cmd.compare("searchOrdered") == 0)
+        searchStrategy = new OrderedSearch(matrixData);
+    else if (cmd.compare("searchUnordered") == 0)
+        searchStrategy = new UnorderedSearch(matrixData);
+    else if (cmd.compare("searchUnordered") == 0)
+        searchStrategy = new ClosestSearch(matrixData);
+    else
+        return false;
+
+    return true;
+}
+
+lvec SearchExecutor::performSearch(lvec inputArr)
+{
+    return searchStrategy->executeSearch(inputArr);
+}
+
+void SearchExecutor::resetStrategy()
+{
+    if (searchStrategy != nullptr)
+    {
+        delete searchStrategy;
+        searchStrategy = NULL;
     }
 }
