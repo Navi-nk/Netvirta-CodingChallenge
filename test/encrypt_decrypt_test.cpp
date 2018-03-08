@@ -1,19 +1,45 @@
 #include <gtest/gtest.h>
 #include <enc_dec_file.hpp>
+#include <fstream>
+#include <cstdio>
 
-TEST(EncDecTest, ShouldEncryptDecryptString)
+class EncDecTest : public testing::Test
 {
-    EncDecHelper encDecHelper;
-    std::string testStr = "This is test string";
-    
-    std::string encryptedStr = encDecHelper.encryptDecrypt(testStr);
+    public:
+        EncDecHelper encDecHelper;
+        std::string testString;
+
+    void SetUp()
+    {
+        testString = "This is test string";
+
+        std::ofstream outfile ("../data/test_data.csv");
+        outfile << testString << std::endl;
+        outfile.close();
+    }
+    void TearDown()
+    {
+        std::remove("../data/test_data.csv");
+        std::remove("../data/enc-test_data.csv");
+    }
+
+};
+
+TEST_F(EncDecTest, ShouldEncryptDecryptString)
+{
+    std::string encryptedStr = encDecHelper.encryptDecrypt(testString);
     std::string decryptedStr = encDecHelper.encryptDecrypt(encryptedStr);
 
-    EXPECT_EQ(testStr,decryptedStr);
+    EXPECT_EQ(testString, decryptedStr);
 }
 
-int main(int argc, char **argv)
+TEST_F(EncDecTest, ShouldEncryptDecryptFile)
 {
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();   
+    std::string filePath = "../data";
+    std::string fileName="test_data.csv";
+
+    EXPECT_EQ(true, encDecHelper.encryptFile(filePath,fileName));
+
+    std::vector<std::string> out = encDecHelper.decryptFile("../data/enc-test_data.csv");
+    EXPECT_EQ(out[0], testString);
 }

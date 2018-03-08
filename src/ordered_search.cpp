@@ -2,6 +2,9 @@
 
 lvec OrderedSearch::executeSearch(lvec inputArr)
 {
+    if(inputArr.size() == 0)
+        return {-1};
+
     const matrixmap & matrixMap = matrixData.matrixMap;
     const matrixtype & matrix = matrixData.matrix;
 

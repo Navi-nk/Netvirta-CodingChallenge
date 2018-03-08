@@ -17,6 +17,7 @@ public:
   bool preprocess(std::vector<std::string>);
   bool setSearchStrategy(std::string);
   lvec performSearch(lvec);
+  const MatrixData& getMatrixData();
 
   ~SearchExecutor()
   {

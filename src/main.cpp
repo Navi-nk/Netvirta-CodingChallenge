@@ -1,6 +1,7 @@
 #include "enc_dec_file.hpp"
 #include "search_executor.hpp"
 
+//function to print the vector
 void printResult(std::vector<long> res)
 {
     for (std::vector<long>::iterator it = res.begin(); it != res.end(); it++)
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
     EncDecHelper encDecHelper;
     SearchExecutor searchExecutor;
 
-    std::vector<std::string> strVec = encDecHelper.decryptFile(file);
+    std::vector<std::string> strVec = encDecHelper.decryptFile(file); //decrypt the input file
 
     if (strVec.size() == 0)
     {
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    //preprocess the input matrix
     if (!searchExecutor.preprocess(strVec))
     {
         std::cout << file << " File contains invalid data" << std::endl;
@@ -45,14 +47,17 @@ int main(int argc, char **argv)
     std::cout << "use \"exit\" command to exit program\n"
               << std::endl;
 
+    //continously take input from console
     std::string line;
     while (std::getline(std::cin, line))
     {
+        //trim any extra spaces
         line = std::regex_replace(line, std::regex("( ) +"), " ");
         line = std::regex_replace(line, std::regex("^ +| +$"), "");
 
-        std::cout << "Line Received: " << line << '\n';
+        //std::cout << "Line Received: " << line << '\n';
 
+        //exit condition
         if (line.compare("exit") == 0)
         {
             std::cout << "Bye Bye" << std::endl;
@@ -60,31 +65,35 @@ int main(int argc, char **argv)
         }
 
         int pos = 0;
-        //std::string cmd;
         lvec inputArr;
 
         char *lineCh = strdup(line.c_str());
         char *token = strtok(lineCh, " ");
 
+        //check if the command given is valid
         if (searchExecutor.setSearchStrategy(std::string(token)))
         {
             token = strtok(NULL, " ");
-            long nonAllowedPos = std::string(token).find_first_not_of("0123456789 ");
-
+            //validate if the sequence argument is valid
+            long nonAllowedPos = std::string(token).find_first_not_of("0123456789 -");
             if (nonAllowedPos != std::string::npos)
             {
                 std::cout << "invalid input. try again" << std::endl;
+                free(lineCh);
                 continue;
             }
+
             try
             {
+                //read each number in the sequence
                 while (token != NULL)
                 {
-                    long val = std::stol(token, nullptr);
+                    long val = std::stol(token, nullptr); //convert to to long
                     inputArr.push_back(val);
                     token = strtok(NULL, " ");
                 }
-                lvec res = searchExecutor.performSearch(inputArr);
+
+                lvec res = searchExecutor.performSearch(inputArr);  // perform search and return matching indices 
 
                 printResult(res);
             }

@@ -2,26 +2,46 @@
 #include "ordered_search.hpp"
 #include "unordered_search.hpp"
 #include "closest_search.hpp"
-#include <iostream>
 
+//function to preprocess the input matrix data
 bool SearchExecutor::preprocess(std::vector<std::string> strVec)
 {
+    if(strVec.size() == 0)
+        return false;
+
     long pos = 0;
     try
     {
         for (std::vector<std::string>::iterator it = strVec.begin(); it != strVec.end(); it++)
         {
-            std::vector<long> innerVec;
+            lvec innerVec;
             std::string line = std::regex_replace(*it, std::regex("^ +| +$|( ) +"), ""); //remove all whitespaces
 
-            while ((pos = line.find(',')) != std::string::npos) //iterate through string using "," as delimiter
+            char *lineCh = strdup(line.c_str());
+            
+            long nonAllowedPos = std::string(lineCh).find_first_not_of("0123456789,-");
+            if (nonAllowedPos != std::string::npos)
+            {
+                free(lineCh);
+                return false;
+            }
+
+            char *token = strtok(lineCh, ",");
+            while (token != NULL)
+            {
+                long val = std::stol(token, nullptr); //convert to to long
+                innerVec.push_back(val);
+                token = strtok(NULL, ",");
+            }
+
+            /* while ((pos = line.find(',')) != std::string::npos) //iterate through string using "," as delimiter
             {
                 long val = std::stol(line.substr(0, pos), nullptr); //convert string to long
                 innerVec.push_back(val);
                 line.erase(0, pos + 1);
             }
             if (pos == std::string::npos)
-                innerVec.push_back(std::stol(line.substr(0, line.length()), nullptr));
+                innerVec.push_back(std::stol(line.substr(0, line.length()), nullptr));*/
 
             if (innerVec.size() > 0)
                 matrixData.matrix.push_back(innerVec);
@@ -39,6 +59,8 @@ bool SearchExecutor::preprocess(std::vector<std::string> strVec)
     return true;
 }
 
+//function to preprocess the matrix to from a nested map
+//map[number]=>{map[rowIdx]=>[positions]}
 void SearchExecutor::preprocessMatrix()
 {
     for (long i = 0; i < matrixData.matrix.size(); i++)
@@ -47,7 +69,7 @@ void SearchExecutor::preprocessMatrix()
         {
             if (matrixData.matrixMap.find(matrixData.matrix[i][j]) == matrixData.matrixMap.end())
             {
-                std::unordered_map<long, std::vector<long>> innerMap = {{i, {j}}};
+                mapoflvec innerMap = {{i, {j}}};
                 matrixData.matrixMap.insert({matrixData.matrix[i][j], innerMap});
             }
             else
@@ -58,6 +80,7 @@ void SearchExecutor::preprocessMatrix()
     }
 }
 
+//function to set the search strategy based on search type
 bool SearchExecutor::setSearchStrategy(std::string cmd)
 {
     resetStrategy();
@@ -66,7 +89,7 @@ bool SearchExecutor::setSearchStrategy(std::string cmd)
         searchStrategy = new OrderedSearch(matrixData);
     else if (cmd.compare("searchUnordered") == 0)
         searchStrategy = new UnorderedSearch(matrixData);
-    else if (cmd.compare("searchUnordered") == 0)
+    else if (cmd.compare("searchClosest") == 0)
         searchStrategy = new ClosestSearch(matrixData);
     else
         return false;
@@ -74,11 +97,7 @@ bool SearchExecutor::setSearchStrategy(std::string cmd)
     return true;
 }
 
-lvec SearchExecutor::performSearch(lvec inputArr)
-{
-    return searchStrategy->executeSearch(inputArr);
-}
-
+//to free the previous memory used by search strategy object pointer
 void SearchExecutor::resetStrategy()
 {
     if (searchStrategy != nullptr)
@@ -86,4 +105,15 @@ void SearchExecutor::resetStrategy()
         delete searchStrategy;
         searchStrategy = NULL;
     }
+}
+
+//performs polymorphic call to appropriate search function
+lvec SearchExecutor::performSearch(lvec inputArr)
+{
+    return searchStrategy->executeSearch(inputArr);
+}
+
+const MatrixData& SearchExecutor::getMatrixData()
+{
+    return matrixData;
 }

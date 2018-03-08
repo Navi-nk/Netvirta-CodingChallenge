@@ -1,5 +1,6 @@
 #include "enc_dec_file.hpp"
 
+//function to encrpypt and decrypt the input string - using xor encrpytion method
 std::string EncDecHelper::encryptDecrypt(std::string inputStr)
 {
     char key[] = {'N', 'E', 'T', 'V', 'I', 'R', 'T', 'A'};
@@ -11,6 +12,7 @@ std::string EncDecHelper::encryptDecrypt(std::string inputStr)
     return outputStr;
 }
 
+//function to encrypt contents of file and write to the outfile - with prefix "enc-" in same path
 bool EncDecHelper::encryptFile(std::string filePath, std::string fileName)
 {
     std::string line;
@@ -32,6 +34,7 @@ bool EncDecHelper::encryptFile(std::string filePath, std::string fileName)
     return true;
 }
 
+//function to decrypt the contents of input file and return the contents as array of strings
 std::vector<std::string> EncDecHelper::decryptFile(std::string file)
 {
     std::string line;
@@ -49,6 +52,7 @@ std::vector<std::string> EncDecHelper::decryptFile(std::string file)
     return strVec;
 }
 
+//this is the driver main function to encrypt the input file - enclosed in macro guard so that this class can be used by other files
 #ifdef CREATE_ENC_EXE
 int main(int argc, const char *argv[])
 {

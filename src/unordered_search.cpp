@@ -2,27 +2,28 @@
 
 lvec UnorderedSearch::executeSearch(lvec inputArr)
 {
-    const matrixmap &matrixMap = matrixData.matrixMap;
+    //const matrixmap &matrixMap = matrixData.matrixMap;
+    matrixmap matrixMap = matrixData.matrixMap;
 
     if (inputArr.size() > matrixData.matrix[0].size())
         return {-1};
 
     std::unordered_map<long, long> searchMap;
-    std::unordered_map<long, bool> checkedMap;
     std::vector<long> res;
 
     for (long i = 0; i < inputArr.size(); i++)
     {
         try
         {
-            
-            if (!checkedMap[inputArr[i]])
+
+            mapoflvec &innerMap = matrixMap.at(inputArr[i]);
+            for (mapoflvec::iterator it = innerMap.begin(); it != innerMap.end(); it++)
             {
-                checkedMap[inputArr[i]] = true;
-                mapoflvec innerMap = matrixMap.at(inputArr[i]);
-                for (mapoflvec::iterator it = innerMap.begin(); it != innerMap.end(); it++)
+
+                if (it->second.size() > 0)
                 {
-                    searchMap[it->first] += it->second.size();
+                    searchMap[it->first]++;
+                    (it->second).pop_back();
                 }
             }
         }
