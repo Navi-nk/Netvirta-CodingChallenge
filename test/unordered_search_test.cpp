@@ -1,22 +1,22 @@
 #include <gtest/gtest.h>
-#include "ordered_search.hpp"
+#include "unordered_search.hpp"
 #include "search_executor.hpp"
 #include <gmock/gmock.h>
 #include <algorithm>
 
-struct ordered_mock
+struct unordered_mock
 {
     lvec inputArr;
     lvec outputArr;
 };
 
-class OrderedSearchTest : public testing::Test,
-                          public testing::WithParamInterface<ordered_mock>
+class UnorderedSearchTest : public testing::Test,
+                            public testing::WithParamInterface<unordered_mock>
 {
   public:
     SearchExecutor *searchExecutor;
 
-    OrderedSearchTest()
+    UnorderedSearchTest()
     {
         searchExecutor = new SearchExecutor;
         searchExecutor->preprocess({{"10,-1,891,53,90,141,5,67,22"},
@@ -28,7 +28,7 @@ class OrderedSearchTest : public testing::Test,
     }
     void SetUp()
     {
-        searchExecutor->setSearchStrategy("searchOrdered");
+        searchExecutor->setSearchStrategy("searchUnordered");
     }
     void TearDown()
     {
@@ -36,31 +36,34 @@ class OrderedSearchTest : public testing::Test,
     }
 };
 
-TEST_P(OrderedSearchTest, ShouldPreformOrderedSearch)
+TEST_P(UnorderedSearchTest, ShouldPreformUnOrderedSearch)
 {
     auto input = GetParam();
-    lvec out = searchExecutor->performSearch(input.inputArr); 
-    std::sort(out.begin(),out.end());
+    lvec out = searchExecutor->performSearch(input.inputArr);
+    std::sort(out.begin(), out.end());
     EXPECT_THAT(input.outputArr, out);
 }
 
-INSTANTIATE_TEST_CASE_P(Default, OrderedSearchTest,
+INSTANTIATE_TEST_CASE_P(Default, UnorderedSearchTest,
                         testing::Values(
-                            ordered_mock{
+                            unordered_mock{
                                 {891, 53, 90, 141},
                                 {0, 3}},
-                            ordered_mock{
-                                {62653, -6290, -2621},
+                            unordered_mock{
+                                {62653, -2621, -6290},
                                 {4}},
-                            ordered_mock{
+                            unordered_mock{
                                 {},
                                 {-1}},
-                            ordered_mock{
+                            unordered_mock{
                                 {24, 260, 62, -156, 62, 732, 854, 67, 116},
                                 {2}},
-                            ordered_mock{
+                            unordered_mock{
+                                {-361,102,9730,891,14731,563,223,-3,-36},
+                                {5}},
+                            unordered_mock{
                                 {102, -361, 891, 563, 9730, 1473, -3, -36, 223},
                                 {-1}},
-                            ordered_mock{
+                            unordered_mock{
                                 {24, 260, 62, -156, 62, 732, 854, 67, 116, 0},
                                 {-1}}));

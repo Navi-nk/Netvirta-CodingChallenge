@@ -74,6 +74,14 @@ int main(int argc, char **argv)
         if (searchExecutor.setSearchStrategy(std::string(token)))
         {
             token = strtok(NULL, " ");
+
+            if(token == nullptr)
+            {
+                std::cout << "No input given. try again" << std::endl;
+                free(lineCh);
+                continue;
+            }
+
             //validate if the sequence argument is valid
             long nonAllowedPos = std::string(token).find_first_not_of("0123456789 -");
             if (nonAllowedPos != std::string::npos)

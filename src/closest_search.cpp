@@ -2,10 +2,14 @@
 
 lvec ClosestSearch::executeSearch(lvec inputArr)
 {
+    if(inputArr.size() == 0)
+        return {-1};
+
     matrixmap matrixMap = matrixData.matrixMap;
 
-    if (inputArr.size() > matrixData.matrix[0].size())
-        return {-1};
+    //if (inputArr.size() > matrixData.matrix[0].size())
+        //return {-1};
+        
     std::unordered_map<long, long> searchMap;
 
     for (long i = 0; i < inputArr.size(); i++)
