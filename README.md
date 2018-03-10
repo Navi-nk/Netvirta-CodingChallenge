@@ -13,7 +13,7 @@ Following is the summary of the requirements given to implement:
 - Assume that the search function can be performed multiple times (with different number sequence) but using the same matrix data file
 - You are expected to speed up the search time (ie. it should not be linear to the matrix element count)
 
-#### Application Design
+### Application Design
 The application is written in C++ (C++11) and written on Ubuntu OS (16.04). Visual studio code was the IDE used.
 The input to the application is a csv file and provided as command line argument. Since one of the requirement states that this input file has to be secure, the file has to be encrpyted. To achieve this, a submodule is provided which will encrpyt the input csv file. 
 
@@ -61,3 +61,13 @@ searchUnordered 515 10 7
 searchClosest 10 -14 199 2
 0 1 
 ```
+
+As seen from the above example, the application provides three search functions and outputs the row indices that match the input sequence.
+
+The following shows the class diagram for the application
+<p align="center">
+  <img src="class_diagram.png" alt="Pages"/>
+</p>
+
+
+
