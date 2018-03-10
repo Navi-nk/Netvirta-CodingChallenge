@@ -2,7 +2,6 @@
 #define SEARCH_EXE_H
 #include "search_strategy.hpp"
 #include <regex>
-#include <iostream>
 
 class SearchExecutor
 {
@@ -21,7 +20,6 @@ public:
 
   ~SearchExecutor()
   {
-    std::cout << "delete called" << std::endl;
     if (searchStrategy != nullptr)
       delete searchStrategy;
   }

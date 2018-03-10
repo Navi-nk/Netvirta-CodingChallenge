@@ -8,6 +8,7 @@ class OrderedSearch : public SearchStrategy
     OrderedSearch(MatrixData &matrixData) : SearchStrategy(matrixData) {}
 
     lvec executeSearch(lvec inputArr) override;
+
 };
 
 #endif

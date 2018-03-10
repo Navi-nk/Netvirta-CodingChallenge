@@ -46,7 +46,7 @@ bool SearchExecutor::preprocess(std::vector<std::string> strVec)
             if (innerVec.size() > 0)
                 matrixData.matrix.push_back(innerVec);
 
-            std::cout << *it << " " << std::endl;
+            //std::cout << *it << " " << std::endl;
         }
     }
     catch (...)
