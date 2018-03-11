@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    std::cout << "\n\nAvailable Search Commands" << std::endl;
+    std::cout << "\nAvailable Search Commands" << std::endl;
     std::cout << "1. searchOrdered <sequence of integers>" << std::endl;
     std::cout << "2. searchUnordered <sequence of integers>" << std::endl;
     std::cout << "3. searchClosest <sequence of integers>\n"
@@ -70,8 +70,9 @@ int main(int argc, char **argv)
         char *lineCh = strdup(line.c_str());
         char *token = strtok(lineCh, " ");
 
+
         //check if the command given is valid
-        if (searchExecutor.setSearchStrategy(std::string(token)))
+        if (token != nullptr && searchExecutor.setSearchStrategy(std::string(token)))
         {
             token = strtok(NULL, " ");
 

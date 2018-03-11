@@ -2,7 +2,7 @@
 
 lvec ClosestSearch::executeSearch(lvec inputArr)
 {
-    if(inputArr.size() == 0)
+    if(inputArr.size() == 0) //check for empty input
         return {-1};
 
     matrixmap matrixMap = matrixData.matrixMap;
@@ -12,6 +12,12 @@ lvec ClosestSearch::executeSearch(lvec inputArr)
         
     std::unordered_map<long, long> searchMap;
 
+    //The logic here is:
+    //1. We will traverse the input array and for each integer identify the rows of the matrix where it appears.
+    //2. For each of these rows, identify the number of position in which this number appears.
+    //3. Accumulate this count and associate with the given row index in a map. Make sure the position once counted isn't counted again.
+    //4. At the end, for each row index in the map check which of these rows has the maximum count value. The row which max count is the required result.
+    //   if more than one row has same max count then they are stored in result.
     for (long i = 0; i < inputArr.size(); i++)
     {
         try

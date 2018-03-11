@@ -25,7 +25,7 @@ class OrderedSearchTest : public testing::Test,
                                     {"1560,-631,891,53,90,141,465,-267,-6222"},
                                     {"10,-1,891,62653,-6290,-2621,65,667,282"},
                                     {"102,-361,891,563,9730,14731,-3,-36,223"}});
-    }
+        }
     void SetUp()
     {
         searchExecutor->setSearchStrategy("searchOrdered");
@@ -39,8 +39,8 @@ class OrderedSearchTest : public testing::Test,
 TEST_P(OrderedSearchTest, ShouldPreformOrderedSearch)
 {
     auto input = GetParam();
-    lvec out = searchExecutor->performSearch(input.inputArr); 
-    std::sort(out.begin(),out.end());
+    lvec out = searchExecutor->performSearch(input.inputArr);
+    std::sort(out.begin(), out.end());
     EXPECT_THAT(input.outputArr, out);
 }
 
